@@ -8,6 +8,7 @@ import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { fr } from '@payloadcms/translations/languages/fr'
 import { openapi, swaggerUI } from 'payload-oapi'
 import { Admins } from './collections/admins'
 import { Media } from './collections/media'
@@ -21,6 +22,14 @@ export default buildConfig({
     limits: {
       fileSize: 40000000, // 40MB, written in bytes
     },
+  },
+  localization: {
+    locales: ['fr', 'es', 'en'],
+    defaultLocale: 'fr',
+  },
+  i18n: {
+    fallbackLanguage: 'fr',
+    supportedLanguages: { fr },
   },
   admin: {
     user: Admins.slug,

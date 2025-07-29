@@ -86,7 +86,7 @@ export interface Config {
   };
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'fr' | 'es' | 'en';
   user: Admin & {
     collection: 'admins';
   };
