@@ -1,0 +1,62 @@
+$success-color: #00aa50;
+$success-color-dark: #019a49;
+
+.list-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  h1 {
+    margin-right: auto;
+  }
+
+  a,
+  button {
+    padding: 0.4rem 0.8rem;
+  }
+
+  a {
+    background-color: $success-color;
+    color: #fff;
+
+    &:hover {
+      background-color: $success-color-dark;
+    }
+  }
+}
+
+[data-theme='dark'] .react-datepicker__day--disabled,
+[data-theme='dark'] .react-datepicker__time-list-item--disabled {
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+[data-theme='light'] .react-datepicker__day--disabled,
+[data-theme='light'] .react-datepicker__time-list-item--disabled {
+  text-decoration: line-through;
+  text-decoration-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.6);
+
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+#before-login {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+#logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}

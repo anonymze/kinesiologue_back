@@ -33,6 +33,9 @@ export default buildConfig({
   },
   admin: {
     user: Admins.slug,
+    avatar: {
+      Component: '/components/settings.tsx',
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
