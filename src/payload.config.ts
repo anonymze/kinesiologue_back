@@ -91,53 +91,33 @@ export default buildConfig({
     // ],
     idType: 'uuid',
     pool: {
-      connectionString: process.env.POSTGRES_URL || '',
+      connectionString: process.env.DATABASE_URI || '',
     },
-    // Add hooks after schema initialization
-    afterSchemaInit: [
-      async ({ schema }) => {
-        // const relations = ['relations_messages']
-
-        // relations.forEach((relation) => {
-        //   const index = Symbol.for(`drizzle:PgInlineForeignKeys`)
-        //   // console.log(index);
-        //   //@ts-expect-error workaround
-        //   const fkeys = schema.relations[relation].table[index]
-        //   // Loop through the foreign keys and modify them
-        //   //@ts-expect-error workaround
-        //   fkeys.forEach((foreignKey) => {
-        //     foreignKey.onDelete = 'CASCADE'
-        //     foreignKey.onUpdate = 'CASCADE'
-        //   })
-        // })
-        return schema
-      },
-    ],
   }),
   sharp,
   plugins: [
-    payloadCloudPlugin({
-      // storage: false,
-      // email: false,
-      // uploadCaching: false,
-    }),
-    openapi({
-      openapiVersion: '3.0',
-      metadata: { title: 'SIMPLY LIFE API', version: '1.0.0' },
-    }),
-    swaggerUI({}),
-    vercelBlobStorage({
-      enabled: true, // Optional, defaults to true
-      // Specify which collections should use Vercel Blob
-      collections: {
-        media: {
-          disableLocalStorage: true,
-          prefix: 'media-simply-life',
-        },
-      },
+    // payloadCloudPlugin({
+    //   // storage: false,
+    //   // email: false,
+    //   // uploadCaching: false,
+    // }),
+    // openapi({
+    //   openapiVersion: '3.0',
+    //   metadata: { title: 'SIMPLY LIFE API', version: '1.0.0' },
+    // }),
+    // swaggerUI({}),
+    // vercelBlobStorage({
+    //   enabled: true, // Optional, defaults to true
+    //   // Specify which collections should use Vercel Blob
+    //   collections: {
+    //     media: {
+    //       disableLocalStorage: true,
+    //       prefix: 'media-simply-life',
+    //     },
+    //   },
 
-      // Token provided by Vercel once Blob storage is added to your Vercel project
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    }),
+    //   // Token provided by Vercel once Blob storage is added to your Vercel project
+    //   token: process.env.BLOB_READ_WRITE_TOKEN,
+    // }),
   ],
 })
