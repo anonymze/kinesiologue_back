@@ -111,43 +111,43 @@ export const generateVideoBlurHash = async (buffer: Buffer) => {
   return undefined
 }
 
-export const validateMedia = async (
-  data: string | undefined,
-  mimeType:
-    | 'image/'
-    | 'video/'
-    | 'application/pdf'
-    | 'sheet'
-    | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' = 'image/',
-) => {
-  if (!data) return
-  const payload = await getPayload({
-    config,
-  })
-  const file = await payload.findByID({
-    collection: 'media',
-    id: data,
-  })
+// export const validateMedia = async (
+//   data: string | undefined,
+//   mimeType:
+//     | 'image/'
+//     | 'video/'
+//     | 'application/pdf'
+//     | 'sheet'
+//     | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' = 'image/',
+// ) => {
+//   if (!data) return
+//   const payload = await getPayload({
+//     config,
+//   })
+//   const file = await payload.findByID({
+//     collection: 'media',
+//     id: data,
+//   })
 
-  // Handle sheet files (Excel and CSV)
-  if (mimeType === 'sheet') {
-    const isExcel =
-      file.mimeType?.startsWith(
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      ) || file.mimeType?.startsWith('application/vnd.ms-excel')
-    const isCsv = file.mimeType?.startsWith('text/csv')
+//   // Handle sheet files (Excel and CSV)
+//   if (mimeType === 'sheet') {
+//     const isExcel =
+//       file.mimeType?.startsWith(
+//         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+//       ) || file.mimeType?.startsWith('application/vnd.ms-excel')
+//     const isCsv = file.mimeType?.startsWith('text/csv')
 
-    if (!isExcel && !isCsv) {
-      return 'Le fichier doit être un Excel (.xlsx, .xls) ou CSV (.csv).'
-    }
-    return // Valid sheet file
-  }
+//     if (!isExcel && !isCsv) {
+//       return 'Le fichier doit être un Excel (.xlsx, .xls) ou CSV (.csv).'
+//     }
+//     return // Valid sheet file
+//   }
 
-  if (file.mimeType?.startsWith(mimeType) === false) {
-    if (mimeType === 'image/') return 'Le fichier doit être une image.'
-    if (mimeType === 'video/') return 'Le fichier doit être une vidéo.'
-    if (mimeType === 'application/pdf') return 'Le fichier doit être un PDF.'
-    if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-      return 'Le fichier doit être un Excel (.xlsx, .xls).'
-  }
-}
+//   if (file.mimeType?.startsWith(mimeType) === false) {
+//     if (mimeType === 'image/') return 'Le fichier doit être une image.'
+//     if (mimeType === 'video/') return 'Le fichier doit être une vidéo.'
+//     if (mimeType === 'application/pdf') return 'Le fichier doit être un PDF.'
+//     if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+//       return 'Le fichier doit être un Excel (.xlsx, .xls).'
+//   }
+// }

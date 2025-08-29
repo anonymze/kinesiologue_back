@@ -4,8 +4,8 @@ import './styles.css'
 import React from 'react'
 
 export const metadata = {
-  description: 'MDV',
-  title: 'MDV',
+  description: 'Charlotte',
+  title: 'Charlotte',
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
