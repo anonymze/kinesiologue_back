@@ -20,11 +20,14 @@ import {
   numeric,
   serial,
   jsonb,
+  pgEnum,
 } from '@payloadcms/db-vercel-postgres/drizzle/pg-core'
 import { sql, relations } from '@payloadcms/db-vercel-postgres/drizzle'
+export const enum__locales = pgEnum('enum__locales', ['fr', 'es', 'en'])
+export const enum_clients_origin = pgEnum('enum_clients_origin', ['france', 'suisse'])
 
-export const mdv_admins_sessions = pgTable(
-  'mdv_admins_sessions',
+export const admins_sessions = pgTable(
+  'admins_sessions',
   {
     _order: integer('_order').notNull(),
     _parentID: uuid('_parent_id').notNull(),
@@ -37,18 +40,18 @@ export const mdv_admins_sessions = pgTable(
     }).notNull(),
   },
   (columns) => ({
-    _orderIdx: index('mdv_admins_sessions_order_idx').on(columns._order),
-    _parentIDIdx: index('mdv_admins_sessions_parent_id_idx').on(columns._parentID),
+    _orderIdx: index('admins_sessions_order_idx').on(columns._order),
+    _parentIDIdx: index('admins_sessions_parent_id_idx').on(columns._parentID),
     _parentIDFk: foreignKey({
       columns: [columns['_parentID']],
-      foreignColumns: [mdv_admins.id],
-      name: 'mdv_admins_sessions_parent_id_fk',
+      foreignColumns: [admins.id],
+      name: 'admins_sessions_parent_id_fk',
     }).onDelete('cascade'),
   }),
 )
 
-export const mdv_admins = pgTable(
-  'mdv_admins',
+export const admins = pgTable(
+  'admins',
   {
     id: uuid('id').defaultRandom().primaryKey(),
     fullname: varchar('fullname').notNull(),
@@ -74,38 +77,31 @@ export const mdv_admins = pgTable(
     lockUntil: timestamp('lock_until', { mode: 'string', withTimezone: true, precision: 3 }),
   },
   (columns) => ({
-    mdv_admins_updated_at_idx: index('mdv_admins_updated_at_idx').on(columns.updatedAt),
-    mdv_admins_created_at_idx: index('mdv_admins_created_at_idx').on(columns.createdAt),
-    mdv_admins_email_idx: uniqueIndex('mdv_admins_email_idx').on(columns.email),
+    admins_updated_at_idx: index('admins_updated_at_idx').on(columns.updatedAt),
+    admins_created_at_idx: index('admins_created_at_idx').on(columns.createdAt),
+    admins_email_idx: uniqueIndex('admins_email_idx').on(columns.email),
   }),
 )
 
-export const mdv_media = pgTable(
-  'mdv_media',
+export const clients = pgTable(
+  'clients',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    alt: varchar('alt'),
-    blurhash: varchar('blurhash'),
+    lastname: varchar('lastname').notNull(),
+    firstname: varchar('firstname').notNull(),
+    birthday: timestamp('birthday', { mode: 'string', withTimezone: true, precision: 3 }),
+    origin: enum_clients_origin('origin'),
+    last_visit: timestamp('last_visit', { mode: 'string', withTimezone: true, precision: 3 }),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
       .notNull(),
     createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
       .notNull(),
-    url: varchar('url'),
-    thumbnailURL: varchar('thumbnail_u_r_l'),
-    filename: varchar('filename'),
-    mimeType: varchar('mime_type'),
-    filesize: numeric('filesize'),
-    width: numeric('width'),
-    height: numeric('height'),
-    focalX: numeric('focal_x'),
-    focalY: numeric('focal_y'),
   },
   (columns) => ({
-    mdv_media_updated_at_idx: index('mdv_media_updated_at_idx').on(columns.updatedAt),
-    mdv_media_created_at_idx: index('mdv_media_created_at_idx').on(columns.createdAt),
-    mdv_media_filename_idx: uniqueIndex('mdv_media_filename_idx').on(columns.filename),
+    clients_updated_at_idx: index('clients_updated_at_idx').on(columns.updatedAt),
+    clients_created_at_idx: index('clients_created_at_idx').on(columns.createdAt),
   }),
 )
 
@@ -141,19 +137,19 @@ export const payload_locked_documents_rels = pgTable(
     order: integer('order'),
     parent: uuid('parent_id').notNull(),
     path: varchar('path').notNull(),
-    adminsID: uuid('mdv_admins_id'),
-    mediaID: uuid('mdv_media_id'),
+    adminsID: uuid('admins_id'),
+    clientsID: uuid('clients_id'),
   },
   (columns) => ({
     order: index('payload_locked_documents_rels_order_idx').on(columns.order),
     parentIdx: index('payload_locked_documents_rels_parent_idx').on(columns.parent),
     pathIdx: index('payload_locked_documents_rels_path_idx').on(columns.path),
-    payload_locked_documents_rels_mdv_admins_id_idx: index(
-      'payload_locked_documents_rels_mdv_admins_id_idx',
+    payload_locked_documents_rels_admins_id_idx: index(
+      'payload_locked_documents_rels_admins_id_idx',
     ).on(columns.adminsID),
-    payload_locked_documents_rels_mdv_media_id_idx: index(
-      'payload_locked_documents_rels_mdv_media_id_idx',
-    ).on(columns.mediaID),
+    payload_locked_documents_rels_clients_id_idx: index(
+      'payload_locked_documents_rels_clients_id_idx',
+    ).on(columns.clientsID),
     parentFk: foreignKey({
       columns: [columns['parent']],
       foreignColumns: [payload_locked_documents.id],
@@ -161,13 +157,13 @@ export const payload_locked_documents_rels = pgTable(
     }).onDelete('cascade'),
     adminsIdFk: foreignKey({
       columns: [columns['adminsID']],
-      foreignColumns: [mdv_admins.id],
+      foreignColumns: [admins.id],
       name: 'payload_locked_documents_rels_admins_fk',
     }).onDelete('cascade'),
-    mediaIdFk: foreignKey({
-      columns: [columns['mediaID']],
-      foreignColumns: [mdv_media.id],
-      name: 'payload_locked_documents_rels_media_fk',
+    clientsIdFk: foreignKey({
+      columns: [columns['clientsID']],
+      foreignColumns: [clients.id],
+      name: 'payload_locked_documents_rels_clients_fk',
     }).onDelete('cascade'),
   }),
 )
@@ -203,15 +199,15 @@ export const payload_preferences_rels = pgTable(
     order: integer('order'),
     parent: uuid('parent_id').notNull(),
     path: varchar('path').notNull(),
-    adminsID: uuid('mdv_admins_id'),
+    adminsID: uuid('admins_id'),
   },
   (columns) => ({
     order: index('payload_preferences_rels_order_idx').on(columns.order),
     parentIdx: index('payload_preferences_rels_parent_idx').on(columns.parent),
     pathIdx: index('payload_preferences_rels_path_idx').on(columns.path),
-    payload_preferences_rels_mdv_admins_id_idx: index(
-      'payload_preferences_rels_mdv_admins_id_idx',
-    ).on(columns.adminsID),
+    payload_preferences_rels_admins_id_idx: index('payload_preferences_rels_admins_id_idx').on(
+      columns.adminsID,
+    ),
     parentFk: foreignKey({
       columns: [columns['parent']],
       foreignColumns: [payload_preferences.id],
@@ -219,7 +215,7 @@ export const payload_preferences_rels = pgTable(
     }).onDelete('cascade'),
     adminsIdFk: foreignKey({
       columns: [columns['adminsID']],
-      foreignColumns: [mdv_admins.id],
+      foreignColumns: [admins.id],
       name: 'payload_preferences_rels_admins_fk',
     }).onDelete('cascade'),
   }),
@@ -248,19 +244,19 @@ export const payload_migrations = pgTable(
   }),
 )
 
-export const relations_mdv_admins_sessions = relations(mdv_admins_sessions, ({ one }) => ({
-  _parentID: one(mdv_admins, {
-    fields: [mdv_admins_sessions._parentID],
-    references: [mdv_admins.id],
+export const relations_admins_sessions = relations(admins_sessions, ({ one }) => ({
+  _parentID: one(admins, {
+    fields: [admins_sessions._parentID],
+    references: [admins.id],
     relationName: 'sessions',
   }),
 }))
-export const relations_mdv_admins = relations(mdv_admins, ({ many }) => ({
-  sessions: many(mdv_admins_sessions, {
+export const relations_admins = relations(admins, ({ many }) => ({
+  sessions: many(admins_sessions, {
     relationName: 'sessions',
   }),
 }))
-export const relations_mdv_media = relations(mdv_media, () => ({}))
+export const relations_clients = relations(clients, () => ({}))
 export const relations_payload_locked_documents_rels = relations(
   payload_locked_documents_rels,
   ({ one }) => ({
@@ -269,15 +265,15 @@ export const relations_payload_locked_documents_rels = relations(
       references: [payload_locked_documents.id],
       relationName: '_rels',
     }),
-    adminsID: one(mdv_admins, {
+    adminsID: one(admins, {
       fields: [payload_locked_documents_rels.adminsID],
-      references: [mdv_admins.id],
+      references: [admins.id],
       relationName: 'admins',
     }),
-    mediaID: one(mdv_media, {
-      fields: [payload_locked_documents_rels.mediaID],
-      references: [mdv_media.id],
-      relationName: 'media',
+    clientsID: one(clients, {
+      fields: [payload_locked_documents_rels.clientsID],
+      references: [clients.id],
+      relationName: 'clients',
     }),
   }),
 )
@@ -297,9 +293,9 @@ export const relations_payload_preferences_rels = relations(
       references: [payload_preferences.id],
       relationName: '_rels',
     }),
-    adminsID: one(mdv_admins, {
+    adminsID: one(admins, {
       fields: [payload_preferences_rels.adminsID],
-      references: [mdv_admins.id],
+      references: [admins.id],
       relationName: 'admins',
     }),
   }),
@@ -312,17 +308,19 @@ export const relations_payload_preferences = relations(payload_preferences, ({ m
 export const relations_payload_migrations = relations(payload_migrations, () => ({}))
 
 type DatabaseSchema = {
-  mdv_admins_sessions: typeof mdv_admins_sessions
-  mdv_admins: typeof mdv_admins
-  mdv_media: typeof mdv_media
+  enum__locales: typeof enum__locales
+  enum_clients_origin: typeof enum_clients_origin
+  admins_sessions: typeof admins_sessions
+  admins: typeof admins
+  clients: typeof clients
   payload_locked_documents: typeof payload_locked_documents
   payload_locked_documents_rels: typeof payload_locked_documents_rels
   payload_preferences: typeof payload_preferences
   payload_preferences_rels: typeof payload_preferences_rels
   payload_migrations: typeof payload_migrations
-  relations_mdv_admins_sessions: typeof relations_mdv_admins_sessions
-  relations_mdv_admins: typeof relations_mdv_admins
-  relations_mdv_media: typeof relations_mdv_media
+  relations_admins_sessions: typeof relations_admins_sessions
+  relations_admins: typeof relations_admins
+  relations_clients: typeof relations_clients
   relations_payload_locked_documents_rels: typeof relations_payload_locked_documents_rels
   relations_payload_locked_documents: typeof relations_payload_locked_documents
   relations_payload_preferences_rels: typeof relations_payload_preferences_rels

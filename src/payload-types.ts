@@ -68,7 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     admins: Admin;
-    media: Media;
+    clients: Client;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -76,7 +76,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     admins: AdminsSelect<false> | AdminsSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
+    clients: ClientsSelect<false> | ClientsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -143,23 +143,17 @@ export interface Admin {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "clients".
  */
-export interface Media {
+export interface Client {
   id: string;
-  alt?: string | null;
-  blurhash?: string | null;
+  lastname: string;
+  firstname: string;
+  origin: 'france' | 'suisse';
+  birthday?: string | null;
+  last_visit?: string | null;
   updatedAt: string;
   createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -173,8 +167,8 @@ export interface PayloadLockedDocument {
         value: string | Admin;
       } | null)
     | ({
-        relationTo: 'media';
-        value: string | Media;
+        relationTo: 'clients';
+        value: string | Client;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -246,22 +240,16 @@ export interface AdminsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
+ * via the `definition` "clients_select".
  */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  blurhash?: T;
+export interface ClientsSelect<T extends boolean = true> {
+  lastname?: T;
+  firstname?: T;
+  origin?: T;
+  birthday?: T;
+  last_visit?: T;
   updatedAt?: T;
   createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

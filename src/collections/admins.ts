@@ -20,14 +20,14 @@ export const Admins: CollectionConfig = {
       fr: 'Administrateurs',
     },
   },
-  admin: {
-    group: {
-      en: 'Users',
-      fr: 'Utilisateurs',
-    },
-    // defaultColumns: ["name", "range", "price", "priceType", "threshold"],
-    useAsTitle: 'email',
-  },
+  // admin: {
+  //   group: {
+  //     en: 'Users',
+  //     fr: 'Utilisateurs',
+  //   },
+  //   // defaultColumns: ["name", "range", "price", "priceType", "threshold"],
+  //   useAsTitle: 'email',
+  // },
   // email and password added by default
   auth: {
     useAPIKey: true,

@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url'
 import { fr } from '@payloadcms/translations/languages/fr'
 // import { openapi, swaggerUI } from 'payload-oapi'
 import { Admins } from './collections/admins'
-import { Media } from './collections/media'
+import { Clients } from './collections/clients'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -67,7 +67,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Admins, Media],
+  collections: [Admins, Clients],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
