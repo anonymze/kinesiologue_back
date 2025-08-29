@@ -24,7 +24,7 @@ export default buildConfig({
     },
   },
   localization: {
-    locales: ['fr', 'es', 'en'],
+    locales: ['fr'],
     defaultLocale: 'fr',
   },
   i18n: {
@@ -51,8 +51,8 @@ export default buildConfig({
     },
 
     meta: {
-      title: 'MDV Administration',
-      description: "Administration pour l'application web MDV",
+      title: 'Charlotte Administration',
+      description: "Administration",
       icons: [
         {
           rel: 'icon',
