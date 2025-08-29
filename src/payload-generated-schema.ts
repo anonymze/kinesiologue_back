@@ -23,7 +23,7 @@ import {
   pgEnum,
 } from '@payloadcms/db-vercel-postgres/drizzle/pg-core'
 import { sql, relations } from '@payloadcms/db-vercel-postgres/drizzle'
-export const enum__locales = pgEnum('enum__locales', ['fr', 'es', 'en'])
+export const enum__locales = pgEnum('enum__locales', ['fr'])
 export const enum_clients_origin = pgEnum('enum_clients_origin', ['france', 'suisse'])
 
 export const admins_sessions = pgTable(
@@ -89,8 +89,8 @@ export const clients = pgTable(
     id: uuid('id').defaultRandom().primaryKey(),
     lastname: varchar('lastname').notNull(),
     firstname: varchar('firstname').notNull(),
+    origin: enum_clients_origin('origin').notNull(),
     birthday: timestamp('birthday', { mode: 'string', withTimezone: true, precision: 3 }),
-    origin: enum_clients_origin('origin'),
     last_visit: timestamp('last_visit', { mode: 'string', withTimezone: true, precision: 3 }),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
@@ -102,6 +102,23 @@ export const clients = pgTable(
   (columns) => ({
     clients_updated_at_idx: index('clients_updated_at_idx').on(columns.updatedAt),
     clients_created_at_idx: index('clients_created_at_idx').on(columns.createdAt),
+  }),
+)
+
+export const mails = pgTable(
+  'mails',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 })
+      .defaultNow()
+      .notNull(),
+  },
+  (columns) => ({
+    mails_updated_at_idx: index('mails_updated_at_idx').on(columns.updatedAt),
+    mails_created_at_idx: index('mails_created_at_idx').on(columns.createdAt),
   }),
 )
 
@@ -139,6 +156,7 @@ export const payload_locked_documents_rels = pgTable(
     path: varchar('path').notNull(),
     adminsID: uuid('admins_id'),
     clientsID: uuid('clients_id'),
+    mailsID: uuid('mails_id'),
   },
   (columns) => ({
     order: index('payload_locked_documents_rels_order_idx').on(columns.order),
@@ -150,6 +168,9 @@ export const payload_locked_documents_rels = pgTable(
     payload_locked_documents_rels_clients_id_idx: index(
       'payload_locked_documents_rels_clients_id_idx',
     ).on(columns.clientsID),
+    payload_locked_documents_rels_mails_id_idx: index(
+      'payload_locked_documents_rels_mails_id_idx',
+    ).on(columns.mailsID),
     parentFk: foreignKey({
       columns: [columns['parent']],
       foreignColumns: [payload_locked_documents.id],
@@ -164,6 +185,11 @@ export const payload_locked_documents_rels = pgTable(
       columns: [columns['clientsID']],
       foreignColumns: [clients.id],
       name: 'payload_locked_documents_rels_clients_fk',
+    }).onDelete('cascade'),
+    mailsIdFk: foreignKey({
+      columns: [columns['mailsID']],
+      foreignColumns: [mails.id],
+      name: 'payload_locked_documents_rels_mails_fk',
     }).onDelete('cascade'),
   }),
 )
@@ -257,6 +283,7 @@ export const relations_admins = relations(admins, ({ many }) => ({
   }),
 }))
 export const relations_clients = relations(clients, () => ({}))
+export const relations_mails = relations(mails, () => ({}))
 export const relations_payload_locked_documents_rels = relations(
   payload_locked_documents_rels,
   ({ one }) => ({
@@ -274,6 +301,11 @@ export const relations_payload_locked_documents_rels = relations(
       fields: [payload_locked_documents_rels.clientsID],
       references: [clients.id],
       relationName: 'clients',
+    }),
+    mailsID: one(mails, {
+      fields: [payload_locked_documents_rels.mailsID],
+      references: [mails.id],
+      relationName: 'mails',
     }),
   }),
 )
@@ -313,6 +345,7 @@ type DatabaseSchema = {
   admins_sessions: typeof admins_sessions
   admins: typeof admins
   clients: typeof clients
+  mails: typeof mails
   payload_locked_documents: typeof payload_locked_documents
   payload_locked_documents_rels: typeof payload_locked_documents_rels
   payload_preferences: typeof payload_preferences
@@ -321,6 +354,7 @@ type DatabaseSchema = {
   relations_admins_sessions: typeof relations_admins_sessions
   relations_admins: typeof relations_admins
   relations_clients: typeof relations_clients
+  relations_mails: typeof relations_mails
   relations_payload_locked_documents_rels: typeof relations_payload_locked_documents_rels
   relations_payload_locked_documents: typeof relations_payload_locked_documents
   relations_payload_preferences_rels: typeof relations_payload_preferences_rels

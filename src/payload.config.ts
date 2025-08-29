@@ -12,6 +12,7 @@ import { fr } from '@payloadcms/translations/languages/fr'
 // import { openapi, swaggerUI } from 'payload-oapi'
 import { Admins } from './collections/admins'
 import { Clients } from './collections/clients'
+import { CustomPage } from './collections/custom-page'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -67,7 +68,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Admins, Clients],
+  collections: [Admins, Clients, CustomPage],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     admins: Admin;
     clients: Client;
+    mails: Mail;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,6 +78,7 @@ export interface Config {
   collectionsSelect: {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
+    mails: MailsSelect<false> | MailsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -157,6 +159,15 @@ export interface Client {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mails".
+ */
+export interface Mail {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -169,6 +180,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'clients';
         value: string | Client;
+      } | null)
+    | ({
+        relationTo: 'mails';
+        value: string | Mail;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -248,6 +263,14 @@ export interface ClientsSelect<T extends boolean = true> {
   origin?: T;
   birthday?: T;
   last_visit?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mails_select".
+ */
+export interface MailsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
 }

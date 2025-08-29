@@ -1,0 +1,4 @@
+Simply Life Account Creation
+
+Click on the link above to complete your Simply Life account creation:
+Link: {{registrationLink}}
