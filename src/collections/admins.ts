@@ -3,7 +3,7 @@ import { CollectionConfig } from 'payload'
 
 export const Admins: CollectionConfig = {
   slug: 'admins',
-  dbName: 'mdv_admins',
+  // dbName: 'mdv_admins',
   access: {
     read: ({ req }) => canAccessApi(req),
     create: ({ req }) => canAccessApi(req),

@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  dbName: 'mdv_media',
+  // dbName: 'mdv_media',
   access: {
     read: ({ req }) => true,
     create: ({ req }) => canAccessApi(req),
