@@ -105,8 +105,8 @@ export const clients = pgTable(
   }),
 )
 
-export const mails = pgTable(
-  'mails',
+export const custom = pgTable(
+  'custom',
   {
     id: uuid('id').defaultRandom().primaryKey(),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
@@ -117,6 +117,30 @@ export const mails = pgTable(
       .notNull(),
   },
   (columns) => ({
+    custom_updated_at_idx: index('custom_updated_at_idx').on(columns.updatedAt),
+    custom_created_at_idx: index('custom_created_at_idx').on(columns.createdAt),
+  }),
+)
+
+export const mails = pgTable(
+  'mails',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    client: uuid('client_id')
+      .notNull()
+      .references(() => clients.id, {
+        onDelete: 'set null',
+      }),
+    rappel: timestamp('rappel', { mode: 'string', withTimezone: true, precision: 3 }).notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 })
+      .defaultNow()
+      .notNull(),
+  },
+  (columns) => ({
+    mails_client_idx: index('mails_client_idx').on(columns.client),
     mails_updated_at_idx: index('mails_updated_at_idx').on(columns.updatedAt),
     mails_created_at_idx: index('mails_created_at_idx').on(columns.createdAt),
   }),
@@ -156,6 +180,7 @@ export const payload_locked_documents_rels = pgTable(
     path: varchar('path').notNull(),
     adminsID: uuid('admins_id'),
     clientsID: uuid('clients_id'),
+    customID: uuid('custom_id'),
     mailsID: uuid('mails_id'),
   },
   (columns) => ({
@@ -168,6 +193,9 @@ export const payload_locked_documents_rels = pgTable(
     payload_locked_documents_rels_clients_id_idx: index(
       'payload_locked_documents_rels_clients_id_idx',
     ).on(columns.clientsID),
+    payload_locked_documents_rels_custom_id_idx: index(
+      'payload_locked_documents_rels_custom_id_idx',
+    ).on(columns.customID),
     payload_locked_documents_rels_mails_id_idx: index(
       'payload_locked_documents_rels_mails_id_idx',
     ).on(columns.mailsID),
@@ -185,6 +213,11 @@ export const payload_locked_documents_rels = pgTable(
       columns: [columns['clientsID']],
       foreignColumns: [clients.id],
       name: 'payload_locked_documents_rels_clients_fk',
+    }).onDelete('cascade'),
+    customIdFk: foreignKey({
+      columns: [columns['customID']],
+      foreignColumns: [custom.id],
+      name: 'payload_locked_documents_rels_custom_fk',
     }).onDelete('cascade'),
     mailsIdFk: foreignKey({
       columns: [columns['mailsID']],
@@ -283,7 +316,14 @@ export const relations_admins = relations(admins, ({ many }) => ({
   }),
 }))
 export const relations_clients = relations(clients, () => ({}))
-export const relations_mails = relations(mails, () => ({}))
+export const relations_custom = relations(custom, () => ({}))
+export const relations_mails = relations(mails, ({ one }) => ({
+  client: one(clients, {
+    fields: [mails.client],
+    references: [clients.id],
+    relationName: 'client',
+  }),
+}))
 export const relations_payload_locked_documents_rels = relations(
   payload_locked_documents_rels,
   ({ one }) => ({
@@ -301,6 +341,11 @@ export const relations_payload_locked_documents_rels = relations(
       fields: [payload_locked_documents_rels.clientsID],
       references: [clients.id],
       relationName: 'clients',
+    }),
+    customID: one(custom, {
+      fields: [payload_locked_documents_rels.customID],
+      references: [custom.id],
+      relationName: 'custom',
     }),
     mailsID: one(mails, {
       fields: [payload_locked_documents_rels.mailsID],
@@ -345,6 +390,7 @@ type DatabaseSchema = {
   admins_sessions: typeof admins_sessions
   admins: typeof admins
   clients: typeof clients
+  custom: typeof custom
   mails: typeof mails
   payload_locked_documents: typeof payload_locked_documents
   payload_locked_documents_rels: typeof payload_locked_documents_rels
@@ -354,6 +400,7 @@ type DatabaseSchema = {
   relations_admins_sessions: typeof relations_admins_sessions
   relations_admins: typeof relations_admins
   relations_clients: typeof relations_clients
+  relations_custom: typeof relations_custom
   relations_mails: typeof relations_mails
   relations_payload_locked_documents_rels: typeof relations_payload_locked_documents_rels
   relations_payload_locked_documents: typeof relations_payload_locked_documents

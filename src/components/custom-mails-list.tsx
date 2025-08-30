@@ -1,6 +1,7 @@
+import { clients as clientsTable, mails as mailsTable } from '@/payload-generated-schema'
+import { and, eq, gte, lt, or, sql } from '@payloadcms/db-vercel-postgres/drizzle'
 import { type ListViewServerProps } from 'payload'
 import RappelSection from './rappel-section'
-import { Client } from '@/payload-types'
 
 export default async function MyCustomServerListView({ payload }: ListViewServerProps) {
   // Calculate date thresholds
@@ -8,41 +9,35 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
   const oneYearAgo = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000)
   const sixMonthsAgo = new Date(today.getTime() - 180 * 24 * 60 * 60 * 1000)
 
-  // Clients to relaunch (between 180 days and 1 year)
-  const usersNeedsToBeRelanced = await payload.db.find({
-    collection: 'clients',
-    limit: 0,
-    sort: 'lastname',
-    where: {
-      and: [
-        {
-          last_visit: {
-            less_than: sixMonthsAgo.toISOString(),
-          },
-        },
-        {
-          last_visit: {
-            greater_than_equal: oneYearAgo.toISOString(),
-          },
-        },
-      ],
-    },
-  })
+  const usersNeedsToBeRelanced = await payload.db.drizzle.execute(sql`
+    SELECT DISTINCT c.*
+    FROM clients c
+    LEFT JOIN mails m ON c.id = m.client_id
+    WHERE (
+      (c.last_visit < ${sixMonthsAgo.toISOString()}
+       AND c.last_visit >= ${oneYearAgo.toISOString()})
+      OR
+      (m.rappel < ${sixMonthsAgo.toISOString()}
+       AND m.rappel >= ${oneYearAgo.toISOString()})
+    )
+    AND (m.rappel IS NULL OR m.rappel < ${sixMonthsAgo.toISOString()})
+    ORDER BY c.lastname
+  `);
 
-  // Old clients (more than 1 year)
-  const oldClients = await payload.db.find({
-    collection: 'clients',
-    limit: 0,
-    sort: 'lastname',
-    where: {
-      last_visit: {
-        less_than: oneYearAgo.toISOString(),
-      },
-    },
-  })
+  const oldClients = await payload.db.drizzle.execute(sql`
+    SELECT DISTINCT c.*
+    FROM clients c
+    LEFT JOIN mails m ON c.id = m.client_id
+    WHERE c.last_visit < ${oneYearAgo.toISOString()}
+    AND (
+      m.rappel IS NULL
+      OR m.rappel < ${oneYearAgo.toISOString()}
+    )
+    ORDER BY c.lastname
+  `);
 
   // All clients count
-  const allClients = await payload.db.count({
+  const allClientsCount = await payload.db.count({
     collection: 'clients',
   })
 
@@ -72,7 +67,7 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
             <div
               style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--theme-success-500)' }}
             >
-              {allClients.totalDocs}
+              {allClientsCount.totalDocs}
             </div>
           </div>
 
@@ -90,7 +85,7 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
             <div
               style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--theme-success-500)' }}
             >
-              {usersNeedsToBeRelanced.docs.length}
+              {usersNeedsToBeRelanced.rows.length}
             </div>
           </div>
           <div
@@ -107,20 +102,20 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
             <div
               style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--theme-success-500)' }}
             >
-              {oldClients.docs.length}
+              {oldClients.rows.length}
             </div>
           </div>
         </div>
 
         <RappelSection
-          title="📧 Envoi de rappels (180 jours d'absence)"
-          clients={usersNeedsToBeRelanced.docs}
+          title="Envoi de rappels (180 jours d'absence)"
+          clients={usersNeedsToBeRelanced.rows}
           type="180"
         />
 
         <RappelSection
-          title="📧 Envoi de rappels (1 an d'absence)"
-          clients={oldClients.docs}
+          title="Envoi de rappels (1 an d'absence)"
+          clients={oldClients.rows}
           type="year"
         />
       </div>

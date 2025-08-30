@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     admins: Admin;
     clients: Client;
+    custom: Custom;
     mails: Mail;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
+    custom: CustomSelect<false> | CustomSelect<true>;
     mails: MailsSelect<false> | MailsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -159,10 +161,21 @@ export interface Client {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom".
+ */
+export interface Custom {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "mails".
  */
 export interface Mail {
   id: string;
+  client: string | Client;
+  rappel: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -180,6 +193,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'clients';
         value: string | Client;
+      } | null)
+    | ({
+        relationTo: 'custom';
+        value: string | Custom;
       } | null)
     | ({
         relationTo: 'mails';
@@ -268,9 +285,19 @@ export interface ClientsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom_select".
+ */
+export interface CustomSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "mails_select".
  */
 export interface MailsSelect<T extends boolean = true> {
+  client?: T;
+  rappel?: T;
   updatedAt?: T;
   createdAt?: T;
 }

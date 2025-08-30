@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 export const CustomPage: CollectionConfig = {
-  slug: 'mails',
+  slug: 'custom',
   labels: {
     singular: 'Mails de rappel',
     plural: 'Mails de rappel',

@@ -13,6 +13,7 @@ import { fr } from '@payloadcms/translations/languages/fr'
 import { Admins } from './collections/admins'
 import { Clients } from './collections/clients'
 import { CustomPage } from './collections/custom-page'
+import { Mails } from './collections/mails'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -68,7 +69,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Admins, Clients, CustomPage],
+  collections: [Admins, Clients, CustomPage, Mails],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
