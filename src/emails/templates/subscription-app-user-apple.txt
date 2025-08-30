@@ -1,7 +1,0 @@
-Création de compte Simply Life
-
-Cliquez sur le lien ci-dessus pour finaliser la création de votre compte Simply Life :
-Lien: {{registrationLink}}
-
-Voici votre code de téléchargement Apple pour l'App Store :
-Code: {{appStoreCode}}

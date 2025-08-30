@@ -1,5 +1,4 @@
-import { clients as clientsTable, mails as mailsTable } from '@/payload-generated-schema'
-import { and, eq, gte, lt, or, sql } from '@payloadcms/db-vercel-postgres/drizzle'
+import { sql } from '@payloadcms/db-vercel-postgres/drizzle'
 import { type ListViewServerProps } from 'payload'
 import RappelSection from './rappel-section'
 
@@ -22,7 +21,7 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
     )
     AND (m.rappel IS NULL OR m.rappel < ${sixMonthsAgo.toISOString()})
     ORDER BY c.lastname
-  `);
+  `)
 
   const oldClients = await payload.db.drizzle.execute(sql`
     SELECT DISTINCT c.*
@@ -34,7 +33,7 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
       OR m.rappel < ${oneYearAgo.toISOString()}
     )
     ORDER BY c.lastname
-  `);
+  `)
 
   // All clients count
   const allClientsCount = await payload.db.count({

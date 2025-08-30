@@ -27,7 +27,7 @@ export default function RappelSection({ title, clients, type }: RappelSectionPro
     try {
       await Promise.all(
         clientsToSendRappel.map((client) => {
-         return fetch('/api/mails', {
+         return fetch('/api/mails/send', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -35,30 +35,11 @@ export default function RappelSection({ title, clients, type }: RappelSectionPro
             body: JSON.stringify({
               client: client.id,
               rappel: new Date(),
+              name: client.firstname + " " + client.lastname
             }),
           })
         }),
       )
-
-      // await sendEmail({
-      //   to: "metier.yann@gmail.com",
-      //   subject: "Création de compte Simply Life",
-      //   text: readFileSync(
-      //     join(
-      //       process.cwd(),
-      //       `src/emails/templates/${language}/subscription-app-user.txt`,
-      //     ),
-      //     "utf-8",
-      //   ).replace("{{registrationLink}}", fullLink),
-
-      //   html: readFileSync(
-      //     join(
-      //       process.cwd(),
-      //       `src/emails/templates/${language}/subscription-app-user.html`,
-      //     ),
-      //     "utf-8",
-      //   ).replace("{{registrationLink}}", fullLink),
-      // });
 
       setLoading(false);
       setClientsReactive(clientsReactive.filter((client) => excludedIds.has(client.id)))
