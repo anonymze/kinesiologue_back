@@ -21,9 +21,15 @@ export const Mails: CollectionConfig = {
       method: 'post',
       path: '/send',
       handler: async (payloadR) => {
-        const data = (await payloadR?.json?.()) as { client: string; rappel: string, name: string, type: "180" | "year" } | null;
+        const data = (await payloadR?.json?.()) as {
+          client: string
+          rappel: string
+          name: string
+          type: '180' | 'year'
+        } | null
 
-        if (!data?.client || !data?.rappel || !data.name || data?.type) return Response.json({}, { status: 400 })
+        if (!data?.client || !data?.rappel || !data.name || data?.type)
+          return Response.json({}, { status: 400 })
 
         payloadR.payload.db.create({
           collection: 'mails',
@@ -37,12 +43,22 @@ export const Mails: CollectionConfig = {
           to: 'metier.yann@gmail.com',
           subject: 'Rappel de prise de rendez-vous en kinesiologie.',
           text: readFileSync(
-            join(process.cwd(), data.type === "180" ? "src/emails/templates/rappel-180-days.txt" : "src/emails/templates/rappel-year.txt"),
+            join(
+              process.cwd(),
+              data.type === '180'
+                ? 'src/emails/templates/rappel-180-days.txt'
+                : 'src/emails/templates/rappel-year.txt',
+            ),
             'utf-8',
           ).replace('{{name}}', data.name),
 
           html: readFileSync(
-            join(process.cwd(), data.type === "180" ? "src/emails/templates/rappel-180-days.html" : "src/emails/templates/rappel-year.html"),
+            join(
+              process.cwd(),
+              data.type === '180'
+                ? 'src/emails/templates/rappel-180-days.html'
+                : 'src/emails/templates/rappel-year.html',
+            ),
             'utf-8',
           ).replace('{{name}}', data.name),
         })
