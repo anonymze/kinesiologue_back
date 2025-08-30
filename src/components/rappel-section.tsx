@@ -1,5 +1,6 @@
 'use client'
 
+import { sendEmail } from '@/emails/email'
 import { useState } from 'react'
 
 interface RappelSectionProps {
@@ -38,6 +39,26 @@ export default function RappelSection({ title, clients, type }: RappelSectionPro
           })
         }),
       )
+
+      // await sendEmail({
+      //   to: "metier.yann@gmail.com",
+      //   subject: "Création de compte Simply Life",
+      //   text: readFileSync(
+      //     join(
+      //       process.cwd(),
+      //       `src/emails/templates/${language}/subscription-app-user.txt`,
+      //     ),
+      //     "utf-8",
+      //   ).replace("{{registrationLink}}", fullLink),
+
+      //   html: readFileSync(
+      //     join(
+      //       process.cwd(),
+      //       `src/emails/templates/${language}/subscription-app-user.html`,
+      //     ),
+      //     "utf-8",
+      //   ).replace("{{registrationLink}}", fullLink),
+      // });
 
       setLoading(false);
       setClientsReactive(clientsReactive.filter((client) => excludedIds.has(client.id)))
