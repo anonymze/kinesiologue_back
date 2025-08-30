@@ -26,9 +26,9 @@ export const Mails: CollectionConfig = {
           rappel: string
           name: string
           type: '180' | 'year'
-        } | null
+        } | null;
 
-        if (!data?.client || !data?.rappel || !data.name || data?.type)
+        if (!data?.client || !data?.rappel || !data?.name || !data?.type)
           return Response.json({}, { status: 400 })
 
         payloadR.payload.db.create({
@@ -41,7 +41,7 @@ export const Mails: CollectionConfig = {
 
         await sendEmail({
           to: 'metier.yann@gmail.com',
-          subject: 'Rappel de prise de rendez-vous en kinesiologie.',
+          subject: 'Rappel de prise de rendez-vous avec votre kinesiologue',
           text: readFileSync(
             join(
               process.cwd(),
