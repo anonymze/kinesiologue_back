@@ -14,6 +14,7 @@ import { Admins } from './collections/admins'
 import { Clients } from './collections/clients'
 import { CustomPage } from './collections/custom-page'
 import { Mails } from './collections/mails'
+import { Hours } from './collections/hours'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -70,6 +71,7 @@ export default buildConfig({
     },
   },
   collections: [Admins, Clients, CustomPage, Mails],
+  globals: [Hours],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

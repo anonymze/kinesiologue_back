@@ -88,8 +88,12 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    hours: Hour;
+  };
+  globalsSelect: {
+    hours: HoursSelect<false> | HoursSelect<true>;
+  };
   locale: 'fr';
   user: Admin & {
     collection: 'admins';
@@ -332,6 +336,28 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hours".
+ */
+export interface Hour {
+  id: string;
+  main: string;
+  secondary?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hours_select".
+ */
+export interface HoursSelect<T extends boolean = true> {
+  main?: T;
+  secondary?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
