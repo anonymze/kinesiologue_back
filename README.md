@@ -65,3 +65,17 @@ That's it! The Docker instance will help you get up and running quickly while al
 ## Questions
 
 If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+
+
+RAJOUTER TYPE D'HUMAIN  HOMME OU FEMME
+RAJOUTER UN MEMO
+AJOTUER TOUTES LES DATES DE VISITE
+ajouter MAIL
+date de naissanc ou age
+
+
+MAIL UNIQUEMENT POUR LES FEMMES
+
+FLYER CHANGER TOUS LES MOIS par charlotte
+
+webhook
