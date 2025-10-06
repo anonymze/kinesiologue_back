@@ -10,12 +10,13 @@ import { fileURLToPath } from 'url'
 // import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { fr } from '@payloadcms/translations/languages/fr'
 // import { openapi, swaggerUI } from 'payload-oapi'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { Admins } from './collections/admins'
+import { Cercle } from './collections/cercle'
 import { Clients } from './collections/clients'
 import { CustomPage } from './collections/custom-page'
-import { Mails } from './collections/mails'
 import { Hours } from './collections/hours'
-import { Cercle } from './collections/cercle'
+import { Mails } from './collections/mails'
 import { Media } from './collections/media'
 
 const filename = fileURLToPath(import.meta.url)
@@ -57,7 +58,7 @@ export default buildConfig({
 
     meta: {
       title: 'Charlotte Administration',
-      description: "Administration",
+      description: 'Administration',
       icons: [
         {
           rel: 'icon',
@@ -122,8 +123,8 @@ export default buildConfig({
         },
       },
 
-    //   // Token provided by Vercel once Blob storage is added to your Vercel project
-    //   token: process.env.BLOB_READ_WRITE_TOKEN,
-    // }),
+      // Token provided by Vercel once Blob storage is added to your Vercel project
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
   ],
 })
