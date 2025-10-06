@@ -33,11 +33,11 @@ export default function RappelSection({ title, clients, type }: RappelSectionPro
             },
             body: JSON.stringify({
               email: client.email,
-              rappel: new Date(),
               firstname: client.firstname,
               lastname: client.lastname,
               genre: client.genre,
               type: type,
+              rappel: new Date(),
             }),
           })
         }),
