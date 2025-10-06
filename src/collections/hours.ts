@@ -2,12 +2,13 @@ import type { GlobalConfig } from 'payload'
 
 export const Hours: GlobalConfig = {
   slug: 'hours',
-  // dbName: 'mdv_media',
   admin: {
-    group: "Travail",
-
+    group: 'Travail',
   },
-  label: "Horaires de travail",
+  access: {
+    read: ({ req }) => true,
+  },
+  label: 'Horaires de travail',
   fields: [
     {
       name: 'main',

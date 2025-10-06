@@ -5,6 +5,9 @@ export const Cercle: GlobalConfig = {
   admin: {
     group: "Travail",
   },
+  access: {
+    read: ({ req }) => true,
+  },
   label: 'Cercle de femmes',
   fields: [
     {
