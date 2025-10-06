@@ -1,16 +1,15 @@
 'use client'
 
-import { sendEmail } from '@/emails/email'
 import { useState } from 'react'
 
 interface RappelSectionProps {
   title: string
   clients: any[]
-  type: '180' | 'year'
+  type: '180' | 'year' | 'cercle'
 }
 
 export default function RappelSection({ title, clients, type }: RappelSectionProps) {
-  const [clientsReactive, setClientsReactive] = useState(clients);
+  const [clientsReactive, setClientsReactive] = useState(clients)
   const [excludedIds, setExcludedIds] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(false)
 
@@ -27,25 +26,27 @@ export default function RappelSection({ title, clients, type }: RappelSectionPro
     try {
       await Promise.all(
         clientsToSendRappel.map((client) => {
-         return fetch('/api/mails/send', {
+          return fetch('/api/mails/send', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              client: client.id,
+              email: client.email,
               rappel: new Date(),
-              name: client.firstname,
-              type: type
+              firstname: client.firstname,
+              lastname: client.lastname,
+              genre: client.genre,
+              type: type,
             }),
           })
         }),
       )
 
-      setLoading(false);
+      setLoading(false)
       setClientsReactive(clientsReactive.filter((client) => excludedIds.has(client.id)))
     } catch (error) {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -88,7 +89,9 @@ export default function RappelSection({ title, clients, type }: RappelSectionPro
           {clientsReactive.map((client: any) => (
             <option key={client.id} value={client.id} style={{ paddingBlock: '0.4rem' }}>
               {client.lastname} {client.firstname} - dernière visite :{' '}
-              {new Date(client.last_visit).toLocaleDateString('fr-FR')}
+              {client.last_visit
+                ? new Date(client.last_visit).toLocaleDateString('fr-FR')
+                : 'Pas de date de visite sur ce client'}
             </option>
           ))}
         </select>
@@ -116,7 +119,6 @@ export default function RappelSection({ title, clients, type }: RappelSectionPro
             cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: '16px',
             fontWeight: '600',
-
           }}
         >
           {loading ? 'Envoie en cours...' : 'Envoyer le rappel'}

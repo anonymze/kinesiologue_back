@@ -29,6 +29,9 @@ export const Admins: CollectionConfig = {
   //   useAsTitle: 'email',
   // },
   // email and password added by default
+  admin: {
+    hidden: true,
+  },
   auth: {
     useAPIKey: true,
     maxLoginAttempts: 4,

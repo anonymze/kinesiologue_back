@@ -35,6 +35,14 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
     ORDER BY c.lastname
   `)
 
+  // All women clients for "Cercle de femmes" - no time limit
+  const womenForCercle = await payload.db.drizzle.execute(sql`
+    SELECT *
+    FROM clients
+    WHERE genre = 'femme'
+    ORDER BY lastname
+  `)
+
   // All clients count
   const allClientsCount = await payload.db.count({
     collection: 'clients',
@@ -104,6 +112,23 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
               {oldClients.rows.length}
             </div>
           </div>
+          <div
+            style={{
+              background: 'var(--theme-elevation-100)',
+              padding: '1.5rem',
+              borderRadius: '8px',
+              border: '1px solid var(--theme-elevation-200)',
+            }}
+          >
+            <h3 style={{ marginBottom: '1rem' }}>
+              Cercle de femmes
+            </h3>
+            <div
+              style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--theme-success-500)' }}
+            >
+              {womenForCercle.rows.length}
+            </div>
+          </div>
         </div>
 
         <RappelSection
@@ -116,6 +141,12 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
           title="Envoi de rappels (1 an d'absence)"
           clients={oldClients.rows}
           type="year"
+        />
+
+        <RappelSection
+          title="Cercle de femmes - Notification"
+          clients={womenForCercle.rows}
+          type="cercle"
         />
       </div>
     </div>

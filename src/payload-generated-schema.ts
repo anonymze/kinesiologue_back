@@ -140,9 +140,38 @@ export const mails = pgTable(
       .notNull(),
   },
   (columns) => ({
-    mails_client_idx: index('mails_client_idx').on(columns.client),
+    mails_client_idx: uniqueIndex('mails_client_idx').on(columns.client),
     mails_updated_at_idx: index('mails_updated_at_idx').on(columns.updatedAt),
     mails_created_at_idx: index('mails_created_at_idx').on(columns.createdAt),
+  }),
+)
+
+export const media = pgTable(
+  'media',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    alt: varchar('alt'),
+    blurhash: varchar('blurhash'),
+    updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 })
+      .defaultNow()
+      .notNull(),
+    url: varchar('url'),
+    thumbnailURL: varchar('thumbnail_u_r_l'),
+    filename: varchar('filename'),
+    mimeType: varchar('mime_type'),
+    filesize: numeric('filesize'),
+    width: numeric('width'),
+    height: numeric('height'),
+    focalX: numeric('focal_x'),
+    focalY: numeric('focal_y'),
+  },
+  (columns) => ({
+    media_updated_at_idx: index('media_updated_at_idx').on(columns.updatedAt),
+    media_created_at_idx: index('media_created_at_idx').on(columns.createdAt),
+    media_filename_idx: uniqueIndex('media_filename_idx').on(columns.filename),
   }),
 )
 
@@ -182,6 +211,7 @@ export const payload_locked_documents_rels = pgTable(
     clientsID: uuid('clients_id'),
     customID: uuid('custom_id'),
     mailsID: uuid('mails_id'),
+    mediaID: uuid('media_id'),
   },
   (columns) => ({
     order: index('payload_locked_documents_rels_order_idx').on(columns.order),
@@ -199,6 +229,9 @@ export const payload_locked_documents_rels = pgTable(
     payload_locked_documents_rels_mails_id_idx: index(
       'payload_locked_documents_rels_mails_id_idx',
     ).on(columns.mailsID),
+    payload_locked_documents_rels_media_id_idx: index(
+      'payload_locked_documents_rels_media_id_idx',
+    ).on(columns.mediaID),
     parentFk: foreignKey({
       columns: [columns['parent']],
       foreignColumns: [payload_locked_documents.id],
@@ -223,6 +256,11 @@ export const payload_locked_documents_rels = pgTable(
       columns: [columns['mailsID']],
       foreignColumns: [mails.id],
       name: 'payload_locked_documents_rels_mails_fk',
+    }).onDelete('cascade'),
+    mediaIdFk: foreignKey({
+      columns: [columns['mediaID']],
+      foreignColumns: [media.id],
+      name: 'payload_locked_documents_rels_media_fk',
     }).onDelete('cascade'),
   }),
 )
@@ -303,6 +341,20 @@ export const payload_migrations = pgTable(
   }),
 )
 
+export const cercle = pgTable('cercle', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 }),
+  createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 }),
+})
+
+export const hours = pgTable('hours', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  main: varchar('main').notNull(),
+  secondary: varchar('secondary'),
+  updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 }),
+  createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 }),
+})
+
 export const relations_admins_sessions = relations(admins_sessions, ({ one }) => ({
   _parentID: one(admins, {
     fields: [admins_sessions._parentID],
@@ -324,6 +376,7 @@ export const relations_mails = relations(mails, ({ one }) => ({
     relationName: 'client',
   }),
 }))
+export const relations_media = relations(media, () => ({}))
 export const relations_payload_locked_documents_rels = relations(
   payload_locked_documents_rels,
   ({ one }) => ({
@@ -351,6 +404,11 @@ export const relations_payload_locked_documents_rels = relations(
       fields: [payload_locked_documents_rels.mailsID],
       references: [mails.id],
       relationName: 'mails',
+    }),
+    mediaID: one(media, {
+      fields: [payload_locked_documents_rels.mediaID],
+      references: [media.id],
+      relationName: 'media',
     }),
   }),
 )
@@ -383,6 +441,8 @@ export const relations_payload_preferences = relations(payload_preferences, ({ m
   }),
 }))
 export const relations_payload_migrations = relations(payload_migrations, () => ({}))
+export const relations_cercle = relations(cercle, () => ({}))
+export const relations_hours = relations(hours, () => ({}))
 
 type DatabaseSchema = {
   enum__locales: typeof enum__locales
@@ -392,21 +452,27 @@ type DatabaseSchema = {
   clients: typeof clients
   custom: typeof custom
   mails: typeof mails
+  media: typeof media
   payload_locked_documents: typeof payload_locked_documents
   payload_locked_documents_rels: typeof payload_locked_documents_rels
   payload_preferences: typeof payload_preferences
   payload_preferences_rels: typeof payload_preferences_rels
   payload_migrations: typeof payload_migrations
+  cercle: typeof cercle
+  hours: typeof hours
   relations_admins_sessions: typeof relations_admins_sessions
   relations_admins: typeof relations_admins
   relations_clients: typeof relations_clients
   relations_custom: typeof relations_custom
   relations_mails: typeof relations_mails
+  relations_media: typeof relations_media
   relations_payload_locked_documents_rels: typeof relations_payload_locked_documents_rels
   relations_payload_locked_documents: typeof relations_payload_locked_documents
   relations_payload_preferences_rels: typeof relations_payload_preferences_rels
   relations_payload_preferences: typeof relations_payload_preferences
   relations_payload_migrations: typeof relations_payload_migrations
+  relations_cercle: typeof relations_cercle
+  relations_hours: typeof relations_hours
 }
 
 declare module '@payloadcms/db-vercel-postgres' {

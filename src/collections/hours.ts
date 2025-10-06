@@ -1,4 +1,4 @@
-import type { CollectionConfig, Document, GlobalConfig } from 'payload'
+import type { GlobalConfig } from 'payload'
 
 export const Hours: GlobalConfig = {
   slug: 'hours',

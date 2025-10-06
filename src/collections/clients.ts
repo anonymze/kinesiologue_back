@@ -12,6 +12,26 @@ export const Clients: CollectionConfig = {
   },
   fields: [
     {
+      name: 'genre',
+      label: 'Genre',
+      type: 'radio',
+      required: true,
+      options: [
+        {
+          label: 'Homme',
+          value: 'homme',
+        },
+        {
+          label: 'Femme',
+          value: 'femme',
+        },
+        {
+          label: 'Autre',
+          value: 'other',
+        },
+      ],
+    },
+    {
       name: 'lastname',
       label: 'Nom',
       type: 'text',
@@ -21,6 +41,12 @@ export const Clients: CollectionConfig = {
       name: 'firstname',
       type: 'text',
       label: 'Prénom',
+      required: true,
+    },
+    {
+      name: 'email',
+      type: 'email',
+      label: 'Email',
       required: true,
     },
     {
@@ -40,17 +66,17 @@ export const Clients: CollectionConfig = {
       required: true,
     },
     {
-      name: 'birthday',
-      type: 'date',
-      label: 'Date de naissance',
+      name: 'age',
+      type: 'text',
+      label: 'Age',
       required: false,
-      admin: {
-        date: {
-          displayFormat: "dd/MM/yyy",
-        },
-      },
     },
-
+    {
+      name: 'memo',
+      type: 'textarea',
+      label: 'Mémo',
+      required: false,
+    },
     {
       name: 'last_visit',
       label: 'Dernière visite',
@@ -61,6 +87,15 @@ export const Clients: CollectionConfig = {
           displayFormat: "dd/MM/yyyy HH:mm",
           pickerAppearance: "dayAndTime",
           timeFormat: "HH:mm",
+        },
+      },
+    },
+    {
+      name: "autres",
+      type: "ui",
+      admin: {
+        components: {
+          Field: "/components/description-below-password.tsx",
         },
       },
     },

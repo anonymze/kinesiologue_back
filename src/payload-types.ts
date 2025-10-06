@@ -71,6 +71,7 @@ export interface Config {
     clients: Client;
     custom: Custom;
     mails: Mail;
+    media: Media;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -81,6 +82,7 @@ export interface Config {
     clients: ClientsSelect<false> | ClientsSelect<true>;
     custom: CustomSelect<false> | CustomSelect<true>;
     mails: MailsSelect<false> | MailsSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -89,9 +91,11 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
+    cercle: Cercle;
     hours: Hour;
   };
   globalsSelect: {
+    cercle: CercleSelect<false> | CercleSelect<true>;
     hours: HoursSelect<false> | HoursSelect<true>;
   };
   locale: 'fr';
@@ -155,10 +159,13 @@ export interface Admin {
  */
 export interface Client {
   id: string;
+  genre: 'homme' | 'femme' | 'other';
   lastname: string;
   firstname: string;
+  email: string;
   origin: 'france' | 'suisse';
-  birthday?: string | null;
+  age?: string | null;
+  memo?: string | null;
   last_visit?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -185,6 +192,25 @@ export interface Mail {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  blurhash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -205,6 +231,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'mails';
         value: string | Mail;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: string | Media;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -279,10 +309,13 @@ export interface AdminsSelect<T extends boolean = true> {
  * via the `definition` "clients_select".
  */
 export interface ClientsSelect<T extends boolean = true> {
+  genre?: T;
   lastname?: T;
   firstname?: T;
+  email?: T;
   origin?: T;
-  birthday?: T;
+  age?: T;
+  memo?: T;
   last_visit?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -304,6 +337,24 @@ export interface MailsSelect<T extends boolean = true> {
   rappel?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  blurhash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -339,6 +390,16 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cercle".
+ */
+export interface Cercle {
+  id: string;
+  flyer: string | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "hours".
  */
 export interface Hour {
@@ -347,6 +408,16 @@ export interface Hour {
   secondary?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cercle_select".
+ */
+export interface CercleSelect<T extends boolean = true> {
+  flyer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
