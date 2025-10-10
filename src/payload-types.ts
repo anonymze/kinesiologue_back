@@ -197,6 +197,7 @@ export interface Mail {
 export interface Media {
   id: string;
   blurhash?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -344,6 +345,7 @@ export interface MailsSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   blurhash?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

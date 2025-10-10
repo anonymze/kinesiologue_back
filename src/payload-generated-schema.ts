@@ -24,6 +24,7 @@ import {
 } from '@payloadcms/db-vercel-postgres/drizzle/pg-core'
 import { sql, relations } from '@payloadcms/db-vercel-postgres/drizzle'
 export const enum__locales = pgEnum('enum__locales', ['fr'])
+export const enum_clients_genre = pgEnum('enum_clients_genre', ['homme', 'femme', 'other'])
 export const enum_clients_origin = pgEnum('enum_clients_origin', ['france', 'suisse'])
 
 export const admins_sessions = pgTable(
@@ -87,10 +88,13 @@ export const clients = pgTable(
   'clients',
   {
     id: uuid('id').defaultRandom().primaryKey(),
+    genre: enum_clients_genre('genre').notNull(),
     lastname: varchar('lastname').notNull(),
     firstname: varchar('firstname').notNull(),
+    email: varchar('email').notNull(),
     origin: enum_clients_origin('origin').notNull(),
-    birthday: timestamp('birthday', { mode: 'string', withTimezone: true, precision: 3 }),
+    age: varchar('age'),
+    memo: varchar('memo'),
     last_visit: timestamp('last_visit', { mode: 'string', withTimezone: true, precision: 3 }),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
@@ -150,8 +154,8 @@ export const media = pgTable(
   'media',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    alt: varchar('alt'),
     blurhash: varchar('blurhash'),
+    prefix: varchar('prefix').default('media-kinesiologue'),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
       .notNull(),
@@ -341,11 +345,22 @@ export const payload_migrations = pgTable(
   }),
 )
 
-export const cercle = pgTable('cercle', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 }),
-  createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 }),
-})
+export const cercle = pgTable(
+  'cercle',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    flyer: uuid('flyer_id')
+      .notNull()
+      .references(() => media.id, {
+        onDelete: 'set null',
+      }),
+    updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 }),
+    createdAt: timestamp('created_at', { mode: 'string', withTimezone: true, precision: 3 }),
+  },
+  (columns) => ({
+    cercle_flyer_idx: index('cercle_flyer_idx').on(columns.flyer),
+  }),
+)
 
 export const hours = pgTable('hours', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -441,11 +456,18 @@ export const relations_payload_preferences = relations(payload_preferences, ({ m
   }),
 }))
 export const relations_payload_migrations = relations(payload_migrations, () => ({}))
-export const relations_cercle = relations(cercle, () => ({}))
+export const relations_cercle = relations(cercle, ({ one }) => ({
+  flyer: one(media, {
+    fields: [cercle.flyer],
+    references: [media.id],
+    relationName: 'flyer',
+  }),
+}))
 export const relations_hours = relations(hours, () => ({}))
 
 type DatabaseSchema = {
   enum__locales: typeof enum__locales
+  enum_clients_genre: typeof enum_clients_genre
   enum_clients_origin: typeof enum_clients_origin
   admins_sessions: typeof admins_sessions
   admins: typeof admins
