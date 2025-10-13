@@ -7,13 +7,38 @@ export async function GET(_req: NextRequest) {
 
 async function verifyWebhookSignature(
   payload: string,
-  signature: string,
+  signatureHeader: string,
   webhookKey: string,
 ): Promise<boolean> {
   try {
+    // Parse signature header: "t=1693597064,v1=5mEzn9C..."
+    const parts = signatureHeader.split(',')
+    let timestamp = ''
+    let signature = ''
+
+    for (const part of parts) {
+      const [key, value] = part.split('=')
+      if (key === 't') timestamp = value
+      if (key === 'v1') signature = value
+    }
+
+    if (!timestamp || !signature) {
+      console.error('Invalid signature format')
+      return false
+    }
+
+    // Create signed payload: timestamp.request_body
+    const signedPayload = `${timestamp}.${payload}`
+
+    // Compute expected signature
     const hmac = createHmac('sha256', webhookKey)
-    hmac.update(payload)
-    const expectedSignature = hmac.digest('base64')
+    hmac.update(signedPayload)
+    const expectedSignature = hmac.digest('hex')
+
+    console.log('Timestamp:', timestamp)
+    console.log('Received signature:', signature)
+    console.log('Expected signature:', expectedSignature)
+
     return signature === expectedSignature
   } catch (error) {
     console.error('Error verifying signature:', error)
@@ -25,11 +50,11 @@ export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text()
     const body = JSON.parse(rawBody)
-    
+
     // Verify webhook signature
     const signature = req.headers.get('calendly-webhook-signature')
     const webhookKey = process.env.CALENDLY_WEBHOOK_KEY
-    
+
     if (!webhookKey) {
       console.error('CALENDLY_WEBHOOK_KEY not configured')
       return new Response(JSON.stringify({ error: 'Webhook key not configured' }), {
@@ -51,7 +76,7 @@ export async function POST(req: NextRequest) {
     } else {
       console.warn('⚠️ No signature provided in webhook')
     }
-    
+
     // Log the webhook event
     console.log('=== Calendly Webhook Received ===')
     console.log('Timestamp:', new Date().toISOString())
@@ -67,24 +92,24 @@ export async function POST(req: NextRequest) {
         console.log('Event:', body.payload?.event)
         // TODO: Save to database, send notification, etc.
         break
-      
+
       case 'invitee.canceled':
         console.log('Appointment canceled!')
         console.log('Invitee:', body.payload?.invitee)
         // TODO: Update database, send cancellation notification
         break
-      
+
       default:
         console.log('Unhandled event type:', body.event)
     }
-    
-    return new Response(JSON.stringify({ received: true }), { 
+
+    return new Response(JSON.stringify({ received: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     })
   } catch (error) {
     console.error('Error processing Calendly webhook:', error)
-    return new Response(JSON.stringify({ error: 'Internal server error' }), { 
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     })

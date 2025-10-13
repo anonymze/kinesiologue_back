@@ -66,11 +66,12 @@ async function createWebhook(webhookUrl: string): Promise<void> {
   }
 
   // Create new webhook subscription
-  const webhookData: WebhookSubscription = {
+  const webhookData: any = {
     organization: organizationUri,
     url: webhookUrl,
     events: ['invitee.created', 'invitee.canceled'],
     signing_key: process.env.CALENDLY_WEBHOOK_KEY!,
+    scope: 'organization',
   }
 
   console.log('\nCreating webhook subscription...')
