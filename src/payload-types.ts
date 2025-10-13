@@ -159,9 +159,8 @@ export interface Admin {
  */
 export interface Client {
   id: string;
-  genre: 'homme' | 'femme' | 'other';
-  lastname: string;
-  firstname: string;
+  genre?: ('homme' | 'femme' | 'other') | null;
+  name: string;
   email: string;
   origin: 'france' | 'suisse';
   age?: string | null;
@@ -311,8 +310,7 @@ export interface AdminsSelect<T extends boolean = true> {
  */
 export interface ClientsSelect<T extends boolean = true> {
   genre?: T;
-  lastname?: T;
-  firstname?: T;
+  name?: T;
   email?: T;
   origin?: T;
   age?: T;

@@ -15,7 +15,7 @@ export const Clients: CollectionConfig = {
       name: 'genre',
       label: 'Genre',
       type: 'radio',
-      required: true,
+      required: false,
       options: [
         {
           label: 'Homme',
@@ -32,15 +32,9 @@ export const Clients: CollectionConfig = {
       ],
     },
     {
-      name: 'lastname',
-      label: 'Nom',
+      name: 'name',
+      label: 'Prénom et Nom',
       type: 'text',
-      required: true,
-    },
-    {
-      name: 'firstname',
-      type: 'text',
-      label: 'Prénom',
       required: true,
     },
     {
@@ -64,6 +58,7 @@ export const Clients: CollectionConfig = {
         },
       ],
       required: true,
+      defaultValue: 'suisse',
     },
     {
       name: 'age',
