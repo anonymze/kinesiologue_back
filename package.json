@@ -31,7 +31,7 @@
     "dotenv": "17.2.1",
     "graphql": "^16.11.0",
     "lucide-react": "^0.542.0",
-    "next": "15.5.2",
+    "next": "15.5.9",
     "nodemailer": "^7.0.5",
     "payload": "3.54.0",
     "payload-oapi": "^0.2.4",
