@@ -20,7 +20,7 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
        AND m.rappel >= ${oneYearAgo.toISOString()})
     )
     AND (m.rappel IS NULL OR m.rappel < ${sixMonthsAgo.toISOString()})
-    ORDER BY c.lastname
+    ORDER BY c.name
   `)
 
   const oldClients = await payload.db.drizzle.execute(sql`
@@ -32,7 +32,7 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
       m.rappel IS NULL
       OR m.rappel < ${oneYearAgo.toISOString()}
     )
-    ORDER BY c.lastname
+    ORDER BY c.name
   `)
 
   // All women clients for "Cercle de femmes" - no time limit
@@ -40,7 +40,7 @@ export default async function MyCustomServerListView({ payload }: ListViewServer
     SELECT *
     FROM clients
     WHERE genre = 'femme'
-    ORDER BY lastname
+    ORDER BY name
   `)
 
   // All clients count
